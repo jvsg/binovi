@@ -11,7 +11,6 @@ endfunction
 function! binovi#bnv()
     let start_pos = line("'<'")
     let end_pos = line("'>'")
-
     let repo_path = System("git rev-parse --show-toplevel")
     let file_path = expand("%:p")
     let file_path_rel = file_path[len(repo_path):]
@@ -25,9 +24,11 @@ function! binovi#bnv()
 
     let url = git_remote_url . "/blob/" . git_branch . file_path_rel
 
-    let url = url . "#" . start_pos . "-#" . end_pos
-    let open_cmd = "python -m webbrowser " . "https://" . url
-
-    " open the url in browser
-    let x=system(open_cmd)
+    let url = url . '#' . start_pos . '-#' . end_pos
+    " check if we are running on darwin
+    if system("uname -s") == "Darwin"
+        let x = system("open " . url)
+    elseif system("uname -s") == "Linux"
+        let x = system("xdg-open " . url)
+    endif
 endfunction
